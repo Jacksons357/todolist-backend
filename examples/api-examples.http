@@ -1,0 +1,111 @@
+### Todo List API - Exemplos de Uso
+
+### 1. Cadastrar usuário
+POST http://localhost:3333/auth/register
+Content-Type: application/json
+
+{
+  "name": "João Silva",
+  "email": "joao@example.com",
+  "password": "123456"
+}
+
+### 2. Fazer login
+POST http://localhost:3333/auth/login
+Content-Type: application/json
+
+{
+  "email": "joao@example.com",
+  "password": "123456"
+}
+
+### 3. Criar projeto
+POST http://localhost:3333/projects
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "Projeto Trabalho",
+  "description": "Tarefas relacionadas ao trabalho"
+}
+
+### 4. Listar projetos
+GET http://localhost:3333/projects
+Authorization: Bearer {{authToken}}
+
+### 5. Criar tarefa sem projeto
+POST http://localhost:3333/todos
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "title": "Comprar pão",
+  "description": "Comprar pão na padaria",
+  "dueDate": "2024-01-15T10:00:00Z"
+}
+
+### 6. Criar tarefa com projeto
+POST http://localhost:3333/todos
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "title": "Implementar API",
+  "description": "Criar endpoints da API REST",
+  "projectId": "{{projectId}}",
+  "note": "Prioridade alta"
+}
+
+### 7. Listar tarefas
+GET http://localhost:3333/todos
+Authorization: Bearer {{authToken}}
+
+### 8. Marcar tarefa como concluída
+PATCH http://localhost:3333/todos/{{todoId}}/complete
+Authorization: Bearer {{authToken}}
+
+### 9. Criar subtarefa
+POST http://localhost:3333/todos/{{todoId}}/subtasks
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "title": "Criar endpoint de autenticação",
+  "description": "Implementar login e registro"
+}
+
+### 10. Listar subtarefas
+GET http://localhost:3333/todos/{{todoId}}/subtasks
+Authorization: Bearer {{authToken}}
+
+### 11. Marcar subtarefa como concluída
+PATCH http://localhost:3333/subtasks/{{subtaskId}}/complete
+Authorization: Bearer {{authToken}}
+
+### 12. Listar tarefas de um projeto específico
+GET http://localhost:3333/projects/{{projectId}}/todos
+Authorization: Bearer {{authToken}}
+
+### 13. Excluir subtarefa
+DELETE http://localhost:3333/subtasks/{{subtaskId}}
+Authorization: Bearer {{authToken}}
+
+### 14. Excluir tarefa
+DELETE http://localhost:3333/todos/{{todoId}}
+Authorization: Bearer {{authToken}}
+
+### 15. Excluir projeto
+DELETE http://localhost:3333/projects/{{projectId}}
+Authorization: Bearer {{authToken}}
+
+### 16. Health check
+GET http://localhost:3333/health
+
+### 17. Documentação Swagger
+GET http://localhost:3333/docs
+
+### Variáveis para usar no VS Code REST Client:
+# @authToken = token_jwt_aqui
+# @projectId = id_do_projeto_aqui
+# @todoId = id_da_tarefa_aqui
+# @subtaskId = id_da_subtarefa_aqui 
