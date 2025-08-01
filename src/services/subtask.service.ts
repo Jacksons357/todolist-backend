@@ -21,7 +21,7 @@ export class SubtaskService {
       data: {
         title,
         description,
-        dueDate: dueDate ? new Date(dueDate) : null,
+        dueDate: dueDate ? new Date(dueDate + (dueDate.includes('T') ? '' : 'T00:00:00')) : null,
         todoId,
         userId
       }

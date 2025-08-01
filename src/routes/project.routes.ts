@@ -94,6 +94,148 @@ export async function projectRoutes(fastify: FastifyInstance) {
     }
   }, ProjectController.getUserProjects as RouteHandlerMethod)
 
+  fastify.get('/:id', {
+    schema: {
+      tags: ['Projetos'],
+      summary: 'Buscar projeto por ID',
+      description: 'Busca um projeto específico do usuário logado',
+      security: [{ Bearer: [] }],
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: {
+          id: {
+            type: 'string',
+            description: 'ID do projeto'
+          }
+        }
+      },
+      response: {
+        200: {
+          description: 'Detalhes do projeto',
+          type: 'object',
+          properties: {
+            success: { type: 'boolean' },
+            data: {
+              type: 'object',
+              properties: {
+                id: { type: 'string' },
+                name: { type: 'string' },
+                description: { type: 'string' },
+                createdAt: { type: 'string', format: 'date-time' },
+                updatedAt: { type: 'string', format: 'date-time' },
+                todos: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      id: { type: 'string' },
+                      title: { type: 'string' },
+                      description: { type: 'string' },
+                      completed: { type: 'boolean' },
+                      createdAt: { type: 'string', format: 'date-time' },
+                      updatedAt: { type: 'string', format: 'date-time' },
+                      subtasks: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            id: { type: 'string' },
+                            title: { type: 'string' },
+                            completed: { type: 'boolean' },
+                            createdAt: { type: 'string', format: 'date-time' },
+                            updatedAt: { type: 'string', format: 'date-time' }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        404: {
+          description: 'Projeto não encontrado',
+          type: 'object',
+          properties: {
+            success: { type: 'boolean' },
+            error: { type: 'string' }
+          }
+        }
+      }
+    }
+  }, ProjectController.getProjectById as RouteHandlerMethod)
+
+  fastify.patch('/:id', {
+    schema: {
+      tags: ['Projetos'],
+      summary: 'Atualizar projeto',
+      description: 'Atualiza um projeto específico do usuário logado',
+      security: [{ Bearer: [] }],
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: {
+          id: {
+            type: 'string',
+            description: 'ID do projeto'
+          }
+        }
+      },
+      body: {
+        type: 'object',
+        properties: {
+          name: {
+            type: 'string',
+            minLength: 1,
+            description: 'Nome do projeto'
+          },
+          description: {
+            type: 'string',
+            description: 'Descrição do projeto (opcional)'
+          }
+        }
+      },
+      response: {
+        200: {
+          description: 'Projeto atualizado com sucesso',
+          type: 'object',
+          properties: {
+            success: { type: 'boolean' },
+            data: {
+              type: 'object',
+              properties: {
+                id: { type: 'string' },
+                name: { type: 'string' },
+                description: { type: 'string' },
+                createdAt: { type: 'string', format: 'date-time' },
+                updatedAt: { type: 'string', format: 'date-time' }
+              }
+            },
+            message: { type: 'string' }
+          }
+        },
+        400: {
+          description: 'Dados inválidos',
+          type: 'object',
+          properties: {
+            success: { type: 'boolean' },
+            error: { type: 'string' }
+          }
+        },
+        404: {
+          description: 'Projeto não encontrado',
+          type: 'object',
+          properties: {
+            success: { type: 'boolean' },
+            error: { type: 'string' }
+          }
+        }
+      }
+    }
+  }, ProjectController.updateProject as RouteHandlerMethod)
+
   fastify.delete('/:id', {
     schema: {
       tags: ['Projetos'],

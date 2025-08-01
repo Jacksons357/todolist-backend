@@ -42,6 +42,62 @@ export class ProjectController {
     }
   }
 
+  static async getProjectById(request: AuthenticatedRequest, reply: FastifyReply) {
+    try {
+      const { id } = idParamSchema.parse(request.params)
+      const userId = request.user.id
+
+      const project = await ProjectService.getProjectById(userId, id)
+
+      reply.status(200).send({
+        success: true,
+        data: project
+      })
+    } catch (error: any) {
+      if (error.message === 'Projeto não encontrado') {
+        reply.status(404).send({
+          success: false,
+          error: error.message
+        })
+        return
+      }
+
+      reply.status(500).send({
+        success: false,
+        error: 'Erro ao buscar projeto'
+      })
+    }
+  }
+
+  static async updateProject(request: AuthenticatedRequest, reply: FastifyReply) {
+    try {
+      const { id } = idParamSchema.parse(request.params)
+      const userId = request.user.id
+      const updateData = createProjectSchema.partial().parse(request.body)
+
+      const project = await ProjectService.updateProject(userId, id, updateData)
+
+      reply.status(200).send({
+        success: true,
+        data: project,
+        message: 'Projeto atualizado com sucesso'
+      })
+    } catch (error: any) {
+      if (error.message === 'Projeto não encontrado') {
+        reply.status(404).send({
+          success: false,
+          error: error.message
+        })
+        return
+      }
+
+      reply.status(400).send({
+        success: false,
+        error: error.message || 'Erro ao atualizar projeto'
+      })
+    }
+  }
+
   static async deleteProject(request: AuthenticatedRequest, reply: FastifyReply) {
     try {
       const { id } = idParamSchema.parse(request.params)

@@ -81,4 +81,27 @@ export class ProjectService {
 
     return project
   }
+
+  static async updateProject(userId: string, projectId: string, updateData: Partial<CreateProjectRequest>) {
+    // Check if project belongs to user
+    const existingProject = await prisma.project.findFirst({
+      where: {
+        id: projectId,
+        userId
+      }
+    })
+
+    if (!existingProject) {
+      throw new Error('Projeto não encontrado')
+    }
+
+    const project = await prisma.project.update({
+      where: {
+        id: projectId
+      },
+      data: updateData
+    })
+
+    return project
+  }
 } 

@@ -23,7 +23,7 @@ export class TodoService {
       data: {
         title,
         description,
-        dueDate: dueDate ? new Date(dueDate) : null,
+        dueDate: dueDate ? new Date(dueDate + (dueDate.includes('T') ? '' : 'T00:00:00')) : null,
         note,
         projectId,
         userId
@@ -152,7 +152,7 @@ export class TodoService {
       data: {
         title: updateData.title,
         description: updateData.description,
-        dueDate: updateData.dueDate ? new Date(updateData.dueDate) : null,
+        dueDate: updateData.dueDate ? new Date(updateData.dueDate + (updateData.dueDate.includes('T') ? '' : 'T00:00:00')) : null,
         note: updateData.note,
         projectId: updateData.projectId
       },

@@ -22,7 +22,13 @@ export const createProjectSchema = z.object({
 export const createTodoSchema = z.object({
   title: z.string().min(1, 'Título é obrigatório'),
   description: z.string().optional(),
-  dueDate: z.string().datetime().optional(),
+  dueDate: z.string().refine((val) => {
+    if (!val) return true; // optional
+    // Aceita tanto formato de data (YYYY-MM-DD) quanto datetime (ISO)
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    const datetimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
+    return dateRegex.test(val) || datetimeRegex.test(val);
+  }, 'Formato de data inválido. Use YYYY-MM-DD ou formato ISO').optional(),
   note: z.string().optional(),
   projectId: z.string().optional()
 })
@@ -31,7 +37,13 @@ export const createTodoSchema = z.object({
 export const createSubtaskSchema = z.object({
   title: z.string().min(1, 'Título é obrigatório'),
   description: z.string().optional(),
-  dueDate: z.string().datetime().optional()
+  dueDate: z.string().refine((val) => {
+    if (!val) return true; // optional
+    // Aceita tanto formato de data (YYYY-MM-DD) quanto datetime (ISO)
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    const datetimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
+    return dateRegex.test(val) || datetimeRegex.test(val);
+  }, 'Formato de data inválido. Use YYYY-MM-DD ou formato ISO').optional()
 })
 
 // Params schemas
