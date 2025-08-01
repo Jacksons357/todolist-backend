@@ -10,9 +10,18 @@
     "swagger:generate": "tsx src/scripts/generate-swagger.ts",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
-  "keywords": ["todo", "api", "fastify", "typescript", "prisma"],
+  "keywords": [
+    "todo",
+    "api",
+    "fastify",
+    "typescript",
+    "prisma"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
@@ -33,6 +42,7 @@
     "pino-pretty": "^10.2.3",
     "prisma": "^5.7.0",
     "tsx": "^4.6.0",
-    "typescript": "^5.3.0"
+    "typescript": "^5.3.0",
+    "vitest": "^3.2.4"
   }
-} 
+}

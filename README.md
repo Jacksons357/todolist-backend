@@ -12,6 +12,7 @@ API REST completa para gerenciamento de tarefas com autenticação JWT e organiz
 - **JWT** - Autenticação
 - **Swagger** - Documentação da API
 - **Zod** - Validação de dados
+- **Vitest** - Framework de testes
 
 ## 📋 Funcionalidades
 
@@ -28,6 +29,7 @@ API REST completa para gerenciamento de tarefas com autenticação JWT e organiz
 ### 📌 Tarefas
 - ✅ Criar tarefa (`POST /todos`)
 - ✅ Listar tarefas (`GET /todos`)
+- ✅ Buscar tarefa por ID (`GET /todos/:id`) ✨
 - ✅ Marcar como concluída (`PATCH /todos/:id/complete`)
 - ✅ Excluir tarefa (`DELETE /todos/:id`)
 
@@ -99,6 +101,9 @@ Acesse a documentação Swagger em: `http://localhost:3333/docs`
 - `npm run db:generate` - Gera o cliente Prisma
 - `npm run db:migrate` - Executa as migrações do banco
 - `npm run db:studio` - Abre o Prisma Studio
+- `npm run test` - Executa testes em modo watch
+- `npm run test:run` - Executa todos os testes
+- `npm run test:coverage` - Executa testes com cobertura
 
 ## 🗂 Estrutura do Projeto
 
@@ -111,6 +116,9 @@ src/
 ├── plugins/        # Plugins do Fastify
 ├── lib/           # Configurações (Prisma)
 ├── types/         # Tipos TypeScript
+├── test/          # Testes unitários
+│   ├── services/  # Testes dos serviços
+│   └── controllers/ # Testes dos controladores
 └── index.ts       # Arquivo principal
 ```
 
@@ -121,6 +129,78 @@ Todas as rotas (exceto `/auth/*`) requerem autenticação via JWT.
 **Header necessário:**
 ```
 Authorization: Bearer <token>
+```
+
+## 🧪 Testes
+
+O projeto inclui testes unitários abrangentes usando Vitest:
+
+### Executar Testes
+```bash
+# Executar todos os testes
+npm run test:run
+
+# Executar testes em modo watch
+npm run test
+
+# Executar testes com cobertura
+npm run test:coverage
+```
+
+### Cobertura de Testes
+- **AuthService**: Testes de registro e login
+- **AuthController**: Testes de endpoints de autenticação
+- **TodoService**: Testes de CRUD de tarefas, incluindo a nova funcionalidade de buscar por ID
+
+### 🔧 Correções Implementadas
+
+#### Problema do JWT Token
+- **Problema**: O método `reply.jwtSign()` retornava `[object Promise]` em vez do token JWT
+- **Solução**: Adicionado `await` antes de `reply.jwtSign()` no controller de autenticação
+- **Teste**: Criados testes unitários que verificam a geração correta do token
+
+#### Nova Funcionalidade: Buscar Tarefa por ID
+- **Rota**: `GET /todos/:id` para buscar tarefa específica
+- **Funcionalidade**: Retorna tarefa completa com projeto e subtarefas
+- **Testes**: Cobertura completa da nova funcionalidade
+
+### Exemplo de Uso da Nova Rota
+
+Para buscar uma tarefa específica por ID (equivalente a `/dashboard/todos/${todo.id}`):
+
+```http
+GET /todos/{todoId}
+Authorization: Bearer {jwt_token}
+```
+
+**Resposta esperada:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "todo-id-123",
+    "title": "Tarefa de teste",
+    "description": "Descrição da tarefa",
+    "dueDate": "2024-12-31T23:59:59.000Z",
+    "note": "Nota adicional",
+    "completed": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "project": {
+      "id": "project-id-123",
+      "name": "Nome do Projeto"
+    },
+    "subtasks": [
+      {
+        "id": "subtask-id-1",
+        "title": "Subtarefa 1",
+        "description": "Descrição da subtarefa",
+        "completed": false,
+        "createdAt": "2024-01-01T00:00:00.000Z"
+      }
+    ]
+  }
+}
 ```
 
 ## 📝 Exemplos de Uso

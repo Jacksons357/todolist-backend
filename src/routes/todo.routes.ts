@@ -147,6 +147,176 @@ export async function todoRoutes(fastify: FastifyInstance) {
     }
   }, TodoController.getUserTodos as RouteHandlerMethod)
 
+  fastify.get('/:id', {
+    schema: {
+      tags: ['Tarefas'],
+      summary: 'Buscar tarefa por ID',
+      description: 'Busca uma tarefa específica pelo ID',
+      security: [{ Bearer: [] }],
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: {
+          id: {
+            type: 'string',
+            description: 'ID da tarefa'
+          }
+        }
+      },
+      response: {
+        200: {
+          description: 'Tarefa encontrada',
+          type: 'object',
+          properties: {
+            success: { type: 'boolean' },
+            data: {
+              type: 'object',
+              properties: {
+                id: { type: 'string' },
+                title: { type: 'string' },
+                description: { type: 'string' },
+                dueDate: { type: 'string', format: 'date-time' },
+                note: { type: 'string' },
+                completed: { type: 'boolean' },
+                createdAt: { type: 'string', format: 'date-time' },
+                updatedAt: { type: 'string', format: 'date-time' },
+                project: {
+                  type: 'object',
+                  properties: {
+                    id: { type: 'string' },
+                    name: { type: 'string' }
+                  }
+                },
+                subtasks: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      id: { type: 'string' },
+                      title: { type: 'string' },
+                      description: { type: 'string' },
+                      completed: { type: 'boolean' },
+                      createdAt: { type: 'string', format: 'date-time' }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        404: {
+          description: 'Tarefa não encontrada',
+          type: 'object',
+          properties: {
+            success: { type: 'boolean' },
+            error: { type: 'string' }
+          }
+        }
+      }
+    }
+  }, TodoController.getTodoById as RouteHandlerMethod)
+
+  fastify.patch('/:id', {
+    schema: {
+      tags: ['Tarefas'],
+      summary: 'Atualizar tarefa',
+      description: 'Atualiza uma tarefa existente',
+      security: [{ Bearer: [] }],
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: {
+          id: {
+            type: 'string',
+            description: 'ID da tarefa'
+          }
+        }
+      },
+      body: {
+        type: 'object',
+        properties: {
+          title: {
+            type: 'string',
+            minLength: 1,
+            description: 'Título da tarefa'
+          },
+          description: {
+            type: 'string',
+            description: 'Descrição da tarefa (opcional)'
+          },
+          dueDate: {
+            type: 'string',
+            format: 'date-time',
+            description: 'Data de vencimento (opcional)'
+          },
+          note: {
+            type: 'string',
+            description: 'Nota adicional (opcional)'
+          },
+          projectId: {
+            type: 'string',
+            description: 'ID do projeto (opcional)'
+          }
+        }
+      },
+      response: {
+        200: {
+          description: 'Tarefa atualizada com sucesso',
+          type: 'object',
+          properties: {
+            success: { type: 'boolean' },
+            data: {
+              type: 'object',
+              properties: {
+                id: { type: 'string' },
+                title: { type: 'string' },
+                description: { type: 'string' },
+                dueDate: { type: 'string', format: 'date-time' },
+                note: { type: 'string' },
+                completed: { type: 'boolean' },
+                project: {
+                  type: 'object',
+                  properties: {
+                    id: { type: 'string' },
+                    name: { type: 'string' }
+                  }
+                },
+                subtasks: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      id: { type: 'string' },
+                      title: { type: 'string' },
+                      completed: { type: 'boolean' }
+                    }
+                  }
+                }
+              }
+            },
+            message: { type: 'string' }
+          }
+        },
+        400: {
+          description: 'Dados inválidos',
+          type: 'object',
+          properties: {
+            success: { type: 'boolean' },
+            error: { type: 'string' }
+          }
+        },
+        404: {
+          description: 'Tarefa ou projeto não encontrado',
+          type: 'object',
+          properties: {
+            success: { type: 'boolean' },
+            error: { type: 'string' }
+          }
+        }
+      }
+    }
+  }, TodoController.updateTodo as RouteHandlerMethod)
+
   fastify.patch('/:id/complete', {
     schema: {
       tags: ['Tarefas'],

@@ -50,6 +50,62 @@ export class TodoController {
     }
   }
 
+  static async getTodoById(request: AuthenticatedRequest, reply: FastifyReply) {
+    try {
+      const { id } = idParamSchema.parse(request.params)
+      const userId = request.user.id
+
+      const todo = await TodoService.getTodoById(userId, id)
+
+      reply.status(200).send({
+        success: true,
+        data: todo
+      })
+    } catch (error: any) {
+      if (error.message === 'Tarefa não encontrada') {
+        reply.status(404).send({
+          success: false,
+          error: error.message
+        })
+        return
+      }
+
+      reply.status(500).send({
+        success: false,
+        error: 'Erro ao buscar tarefa'
+      })
+    }
+  }
+
+  static async updateTodo(request: AuthenticatedRequest, reply: FastifyReply) {
+    try {
+      const { id } = idParamSchema.parse(request.params)
+      const userId = request.user.id
+      const updateData = request.body as any
+
+      const todo = await TodoService.updateTodo(userId, id, updateData)
+
+      reply.status(200).send({
+        success: true,
+        data: todo,
+        message: 'Tarefa atualizada com sucesso'
+      })
+    } catch (error: any) {
+      if (error.message === 'Tarefa não encontrada' || error.message === 'Projeto não encontrado') {
+        reply.status(404).send({
+          success: false,
+          error: error.message
+        })
+        return
+      }
+
+      reply.status(400).send({
+        success: false,
+        error: error.message || 'Erro ao atualizar tarefa'
+      })
+    }
+  }
+
   static async completeTodo(request: AuthenticatedRequest, reply: FastifyReply) {
     try {
       const { id } = idParamSchema.parse(request.params)

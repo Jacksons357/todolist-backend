@@ -1,0 +1,85 @@
+### Variáveis de ambiente
+@baseUrl = http://localhost:3333
+@authToken = {{login.response.body.data.token}}
+
+### 1. Login para obter token
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+
+### 2. Criar uma nova tarefa
+POST {{baseUrl}}/todos
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "title": "Tarefa de teste",
+  "description": "Descrição da tarefa de teste",
+  "dueDate": "2024-12-31T23:59:59.000Z",
+  "note": "Nota adicional para a tarefa"
+}
+
+### 3. Listar todas as tarefas do usuário
+GET {{baseUrl}}/todos
+Authorization: Bearer {{authToken}}
+
+### 4. Buscar tarefa específica por ID
+# Substitua {todoId} pelo ID real da tarefa retornado na criação
+GET {{baseUrl}}/todos/{todoId}
+Authorization: Bearer {{authToken}}
+
+### 5. Marcar tarefa como concluída
+PATCH {{baseUrl}}/todos/{todoId}/complete
+Authorization: Bearer {{authToken}}
+
+### 6. Excluir tarefa
+DELETE {{baseUrl}}/todos/{todoId}
+Authorization: Bearer {{authToken}}
+
+### 7. Criar tarefa com projeto
+POST {{baseUrl}}/todos
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "title": "Tarefa com projeto",
+  "description": "Tarefa associada a um projeto específico",
+  "projectId": "project-id-here"
+}
+
+### 8. Buscar tarefa com projeto e subtarefas
+GET {{baseUrl}}/todos/{todoId}
+Authorization: Bearer {{authToken}}
+
+### Exemplo de resposta esperada para GET /todos/{id}:
+# {
+#   "success": true,
+#   "data": {
+#     "id": "todo-id-123",
+#     "title": "Tarefa de teste",
+#     "description": "Descrição da tarefa de teste",
+#     "dueDate": "2024-12-31T23:59:59.000Z",
+#     "note": "Nota adicional para a tarefa",
+#     "completed": false,
+#     "createdAt": "2024-01-01T00:00:00.000Z",
+#     "updatedAt": "2024-01-01T00:00:00.000Z",
+#     "project": {
+#       "id": "project-id-123",
+#       "name": "Nome do Projeto"
+#     },
+#     "subtasks": [
+#       {
+#         "id": "subtask-id-1",
+#         "title": "Subtarefa 1",
+#         "description": "Descrição da subtarefa",
+#         "completed": false,
+#         "createdAt": "2024-01-01T00:00:00.000Z"
+#       }
+#     ]
+#   }
+# } 

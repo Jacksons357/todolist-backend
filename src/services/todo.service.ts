@@ -62,6 +62,34 @@ export class TodoService {
     return todos
   }
 
+  static async getTodoById(userId: string, todoId: string) {
+    const todo = await prisma.todo.findFirst({
+      where: {
+        id: todoId,
+        userId
+      },
+      include: {
+        project: {
+          select: {
+            id: true,
+            name: true
+          }
+        },
+        subtasks: {
+          orderBy: {
+            createdAt: 'asc'
+          }
+        }
+      }
+    })
+
+    if (!todo) {
+      throw new Error('Tarefa não encontrada')
+    }
+
+    return todo
+  }
+
   static async getProjectTodos(userId: string, projectId: string) {
     // Verify project belongs to user
     const project = await prisma.project.findFirst({
@@ -89,6 +117,61 @@ export class TodoService {
     })
 
     return todos
+  }
+
+  static async updateTodo(userId: string, todoId: string, updateData: Partial<CreateTodoRequest>) {
+    const todo = await prisma.todo.findFirst({
+      where: {
+        id: todoId,
+        userId
+      }
+    })
+
+    if (!todo) {
+      throw new Error('Tarefa não encontrada')
+    }
+
+    // If projectId is provided, verify it belongs to the user
+    if (updateData.projectId) {
+      const project = await prisma.project.findFirst({
+        where: {
+          id: updateData.projectId,
+          userId
+        }
+      })
+
+      if (!project) {
+        throw new Error('Projeto não encontrado')
+      }
+    }
+
+    const updatedTodo = await prisma.todo.update({
+      where: {
+        id: todoId
+      },
+      data: {
+        title: updateData.title,
+        description: updateData.description,
+        dueDate: updateData.dueDate ? new Date(updateData.dueDate) : null,
+        note: updateData.note,
+        projectId: updateData.projectId
+      },
+      include: {
+        project: {
+          select: {
+            id: true,
+            name: true
+          }
+        },
+        subtasks: {
+          orderBy: {
+            createdAt: 'asc'
+          }
+        }
+      }
+    })
+
+    return updatedTodo
   }
 
   static async completeTodo(userId: string, todoId: string) {
