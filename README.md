@@ -41,7 +41,7 @@ API REST completa para gerenciamento de tarefas com autenticação JWT e organiz
 
 1. **Clone o repositório**
 ```bash
-git clone <repository-url>
+git clone https://github.com/Jacksons357/todolist-backend.git
 cd todolist-backend
 ```
 
